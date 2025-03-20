@@ -1,4 +1,4 @@
-/* General Styles */
+/* General Styles /
 body {
     font-family: Arial, sans-serif;
     text-align: center;
@@ -7,9 +7,9 @@ body {
     padding: 0;
 }
 
-/* Landing Page Styles */
+/ Landing Page Styles /
 .landing-header {
-    background-color: #007bff; /* Solid blue background */
+    background-color: #007bff; / Solid blue background /
     color: white;
     text-align: center;
     padding: 50px 20px;
@@ -42,7 +42,7 @@ body {
 }
 
 
-/* Student Info Section */
+/ Student Info Section */
 .container {
     margin: 30px auto;
     width: 80%;

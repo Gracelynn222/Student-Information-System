@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Information System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-color: #B1F0F7;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            max-width: 700px;
+            min-height: 60vh;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-top: 55px;
+        }
+
+        .student-image {
+            display: block;
+            margin: 0 auto;
+            height: auto;
+            width: 100%;
+            max-width: 200px;
+            padding: 5%;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .input-container i {
+            margin-right: 10px;
+            color: #007BFF;
+        }
+
+        input, select {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .button-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        button, .records-button {
+            width: 45%;
+            padding: 15px;
+            font-size: 16px;
+            text-align: center;
+            border-radius: 10px;
+            transition: 0.3s;
+            border: none;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .records-button {
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+        }
+
+        .records-button:hover {
+            background-color: #218838;
+        }
+
+        @media (max-width: 480px) {
+            .button-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            button, .records-button {
+                width: 100%;
+            }
+        }
+
+        h2 {
+            border: 1px solid blue;
+            padding: 20px;
+            width: 40%;
+            border-radius: 10px;
+            margin: auto;
+            margin-top: 50px;
+        }
+        .cta-button:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+         /* Back Button */
+         .back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #000000;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-btn:hover {
+            color: #0056b3;
+        }
+
+        .back-btn i {
+            margin-right: 8px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+      <!-- Back Button -->
+      <a href="index.html" class="back-btn">
+        <i>&#8592;</i> Back
+    </a>
+
+    <h2><i class="fa-solid fa-school"></i> Student Information System</h2>
+
+    <div class="container">
+        <img src="sisi.png" alt="Classroom Image" class="student-image">
+
+        <form id="student-form">
+            <div class="input-container">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" id="name" placeholder="Full Name" required>
+            </div>
+
+            <div class="input-container">
+                <i class="fa-solid fa-id-card"></i>
+                <input type="text" id="student-id" placeholder="Student ID" required>
+            </div>
+
+            <div class="input-container">
+                <i class="fa-solid fa-phone"></i>
+                <input type="text" id="contact" placeholder="Contact Number" required>
+            </div>
+
+            <div class="input-container">
+                <i class="fa-solid fa-book"></i>
+                <select id="course" required>
+                    <option value="">Select Course</option>
+                    <option value="EDUCATION">EDUCATION</option>
+                    <option value="CRIMINOLOGY">CRIMINOLOGY</option>
+                    <option value="IS">INFORMATION SYSTEM</option>
+                    <option value="ARTS">ARTS</option>
+                </select>
+            </div>
+
+            <div class="button-wrapper">
+                <button type="submit"><i class="fa-solid fa-user-plus"></i> Add Student</button>
+                <a href="table.html" class="records-button"><i class="fa-solid fa-list"></i> Set of Records</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const studentForm = document.getElementById("student-form");
+
+            studentForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                const student = {
+                    name: document.getElementById("name").value.trim(),
+                    id: document.getElementById("student-id").value.trim(),
+                    contact: document.getElementById("contact").value.trim(),
+                    course: document.getElementById("course").value
+                };
+
+                if (!student.name || !student.id || !student.contact || !student.course) {
+                    alert("Please fill in all fields.");
+                    return;
+                }
+
+                let students = JSON.parse(localStorage.getItem("students")) || [];
+                students.push(student);
+                localStorage.setItem("students", JSON.stringify(students));
+
+                alert("Student successfully added!");
+                studentForm.reset();
+            });
+        });
+    </script>
+
+</body>
+</html>
