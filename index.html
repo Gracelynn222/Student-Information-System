@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Information System</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS -->
+</head>
+<body>
+
+    <!-- Landing Page -->
+    <header class="landing-header">
+        <img src="pngwing.com (16).png" alt="Student Information Icon" height="80px">
+        <h1>Welcome to the Student Information System</h1>
+        <p>Manage student records with ease.</p>
+        <a href="#" class="cta-button" id="start-button">Get Started</a>
+    </header>
+
+    <!-- Student Information System -->
+    <section id="student-section" class="container">
+        <h2>Student Information System</h2>
+        <img src="sisi.png" alt="Classroom Image" class="student-image" height="80px">
+        
+        <form id="student-form">
+            <input type="text" id="name" placeholder="Full Name" required>
+            <input type="text" id="student-id" placeholder="Student ID" required>
+            <input type="text" id="contact" placeholder="Contact Number" required>
+            <select id="course">
+                <option value="">Select Course</option>
+                <option value="EDUCATION">EDUCATION</option>
+                <option value="CRIMINOLOGY">CRIMINOLOGY</option>
+                <option value="IS">INFORMATION SYSTEM</option>
+                <option value="ARTS">ARTS</option>
+            </select>
+            <button type="submit">Add Student</button>
+        </form>
+
+        <table id="student-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Student ID</th>
+                    <th>Contact</th>
+                    <th>Course</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Student records appear here -->
+            </tbody>
+        </table>
+       
+    </section>
+
+
+    <script src="script.js"></script> <!-- Link to external JS -->
+</body>
+</html>
