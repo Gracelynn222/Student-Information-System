@@ -16,7 +16,7 @@
 
         .container {
             max-width: 900px;
-            margin: 50px auto 0; /* Adjusted top margin */
+            margin: 50px auto 0;
             background: white;
             padding: 20px;
             border-radius: 10px;
@@ -33,7 +33,7 @@
             border-radius: 10px;
             margin: auto;
             margin-bottom: 20px;
-            margin-top: 50px
+            margin-top: 50px;
         }
 
         /* Back Button */
@@ -57,7 +57,7 @@
             font-size: 20px;
         }
 
-        /* Filter Dropdown */
+        /* Filter and Sorting Container */
         .filter-container {
             margin-bottom: 15px;
             font-size: 16px;
@@ -65,6 +65,7 @@
 
         .filter-container label {
             font-weight: bold;
+            margin-right: 10px;
         }
 
         select {
@@ -94,6 +95,7 @@
             background-color: #007BFF;
             color: white;
             font-weight: bold;
+            cursor: pointer;
         }
 
         tr:nth-child(even) {
@@ -131,18 +133,46 @@
         .delete-btn:hover {
             background-color: #c0392b;
         }
+
+        /* Pagination Styles */
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .pagination button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .pagination button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <h2>📚 Student Records</h2>
 
     <!-- Back Button -->
-    <a href="index.html" class="back-btn">
+    <a href="studentinformation.html" class="back-btn">
         <i>&#8592;</i> Back
     </a>
 
     <div class="container">
-        <!-- Filter Dropdown -->
+        <!-- Filter and Sorting Container -->
         <div class="filter-container">
             <label for="filter-course">🔍 Filter by Course:</label>
             <select id="filter-course">
@@ -151,6 +181,16 @@
                 <option value="CRIMINOLOGY">CRIMINOLOGY</option>
                 <option value="IS">INFORMATION SYSTEM</option>
                 <option value="ARTS">ARTS</option>
+            </select>
+
+            <label for="sort-by">🗂 Sort by:</label>
+            <select id="sort-by">
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+                <option value="id-asc">Student ID (ASC)</option>
+                <option value="id-desc">Student ID (DESC)</option>
+                <option value="course-asc">Course (A-Z)</option>
+                <option value="course-desc">Course (Z-A)</option>
             </select>
         </div>
 
@@ -164,70 +204,159 @@
                     <th>⚙️ Actions</th>
                 </tr>
             </thead>
-            <tbody id="studentTableBody">
-                <!-- Student records will be dynamically added here -->
-            </tbody>
+            <tbody id="studentTableBody"></tbody>
         </table>
+
+        <!-- Pagination Controls -->
+        <div class="pagination">
+            <button id="prevPage" disabled>⬅️ Previous</button>
+            <button id="nextPage" disabled>Next ➡️</button>
+        </div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const studentTableBody = document.getElementById("studentTableBody");
             const filterCourse = document.getElementById("filter-course");
+            const sortBy = document.getElementById("sort-by");
+            const prevPageBtn = document.getElementById("prevPage");
+            const nextPageBtn = document.getElementById("nextPage");
 
-            function loadStudents(filter = "ALL") {
+            let currentPage = 1;
+            const studentsPerPage = 10;
+
+            function loadStudents(filter = "ALL", sort = "name-asc", page = 1) {
                 let students = JSON.parse(localStorage.getItem("students")) || [];
-                studentTableBody.innerHTML = "";
 
-                students.forEach((student, index) => {
-                    if (filter === "ALL" || student.course === filter) {
-                        const row = document.createElement("tr");
-                        row.innerHTML = `
-                            <td>${student.name}</td>
-                            <td>${student.id}</td>
-                            <td>${student.contact}</td>
-                            <td>${student.course}</td>
-                            <td class="actions">
-                                <button class="edit-btn" onclick="editStudent(${index})">✏️ Edit</button>
-                                <button class="delete-btn" onclick="deleteStudent(${index})">🗑️ Delete</button>
-                            </td>
-                        `;
-                        studentTableBody.appendChild(row);
-                    }
+                if (filter !== "ALL") {
+                    students = students.filter(student => student.course === filter);
+                }
+
+                students.sort((a, b) => {
+                    if (sort.includes("name")) return sort === "name-asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+                    if (sort.includes("id")) return sort === "id-asc" ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id);
+                    if (sort.includes("course")) return sort === "course-asc" ? a.course.localeCompare(b.course) : b.course.localeCompare(a.course);
                 });
+
+                const start = (page - 1) * studentsPerPage;
+                const paginatedStudents = students.slice(start, start + studentsPerPage);
+
+                studentTableBody.innerHTML = paginatedStudents.map((student, index) => `
+                    <tr>
+                        <td>${student.name}</td>
+                        <td>${student.id}</td>
+                        <td>${student.contact}</td>
+                        <td>${student.course}</td>
+                        <td class="actions">
+                            <button class="edit-btn">✏️ Edit</button>
+                            <button class="delete-btn">🗑️ Delete</button>
+                        </td>
+                    </tr>
+                `).join("");
+
+                prevPageBtn.disabled = page === 1;
+                nextPageBtn.disabled = start + studentsPerPage >= students.length;
             }
 
-            window.editStudent = function (index) {
-                let students = JSON.parse(localStorage.getItem("students")) || [];
-                const student = students[index];
-
-                const newName = prompt("Enter new name:", student.name);
-                const newContact = prompt("Enter new contact:", student.contact);
-                const newCourse = prompt("Enter new course:", student.course);
-
-                if (newName && newContact && newCourse) {
-                    students[index] = { ...student, name: newName, contact: newContact, course: newCourse };
-                    localStorage.setItem("students", JSON.stringify(students));
-                    loadStudents(filterCourse.value);
-                }
-            };
-
-            window.deleteStudent = function (index) {
-                if (confirm("Are you sure you want to delete this student?")) {
-                    let students = JSON.parse(localStorage.getItem("students")) || [];
-                    students.splice(index, 1);
-                    localStorage.setItem("students", JSON.stringify(students));
-                    loadStudents(filterCourse.value);
-                }
-            };
-
-            filterCourse.addEventListener("change", function () {
-                loadStudents(this.value);
-            });
+            prevPageBtn.onclick = () => loadStudents(filterCourse.value, sortBy.value, --currentPage);
+            nextPageBtn.onclick = () => loadStudents(filterCourse.value, sortBy.value, ++currentPage);
 
             loadStudents();
         });
-    </script>
+    </script><script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const studentTableBody = document.getElementById("studentTableBody");
+        const filterCourse = document.getElementById("filter-course");
+        const sortBy = document.getElementById("sort-by");
+        const prevPageBtn = document.getElementById("prevPage");
+        const nextPageBtn = document.getElementById("nextPage");
+
+        let currentPage = 1;
+        const studentsPerPage = 10;
+
+        function loadStudents(filter = "ALL", sort = "name-asc", page = 1) {
+            let students = JSON.parse(localStorage.getItem("students")) || [];
+
+            if (filter !== "ALL") {
+                students = students.filter(student => student.course === filter);
+            }
+
+            students.sort((a, b) => {
+                if (sort.includes("name")) return sort === "name-asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+                if (sort.includes("id")) return sort === "id-asc" ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id);
+                if (sort.includes("course")) return sort === "course-asc" ? a.course.localeCompare(b.course) : b.course.localeCompare(a.course);
+            });
+
+            const start = (page - 1) * studentsPerPage;
+            const paginatedStudents = students.slice(start, start + studentsPerPage);
+
+            studentTableBody.innerHTML = paginatedStudents.map((student, index) => `
+                <tr data-index="${start + index}">
+                    <td>${student.name}</td>
+                    <td>${student.id}</td>
+                    <td>${student.contact}</td>
+                    <td>${student.course}</td>
+                    <td class="actions">
+                        <button class="edit-btn">✏️ Edit</button>
+                        <button class="delete-btn">🗑️ Delete</button>
+                    </td>
+                </tr>
+            `).join("");
+
+            prevPageBtn.disabled = page === 1;
+            nextPageBtn.disabled = start + studentsPerPage >= students.length;
+        }
+
+        function editStudent(index) {
+            let students = JSON.parse(localStorage.getItem("students")) || [];
+            const student = students[index];
+
+            const newName = prompt("Enter new name:", student.name);
+            const newContact = prompt("Enter new contact:", student.contact);
+            const newCourse = prompt("Enter new course:", student.course);
+
+            if (newName && newContact && newCourse) {
+                students[index] = { ...student, name: newName, contact: newContact, course: newCourse };
+                localStorage.setItem("students", JSON.stringify(students));
+                loadStudents(filterCourse.value, sortBy.value, currentPage);
+            }
+        }
+
+        function deleteStudent(index) {
+            if (confirm("Are you sure you want to delete this student?")) {
+                let students = JSON.parse(localStorage.getItem("students")) || [];
+                students.splice(index, 1);
+                localStorage.setItem("students", JSON.stringify(students));
+
+                if (currentPage > 1 && (currentPage - 1) * studentsPerPage >= students.length) {
+                    currentPage--;
+                }
+
+                loadStudents(filterCourse.value, sortBy.value, currentPage);
+            }
+        }
+
+        // Event delegation for dynamically created buttons
+        studentTableBody.addEventListener("click", function (event) {
+            if (event.target.classList.contains("edit-btn")) {
+                const index = parseInt(event.target.closest("tr").dataset.index);
+                editStudent(index);
+            }
+            if (event.target.classList.contains("delete-btn")) {
+                const index = parseInt(event.target.closest("tr").dataset.index);
+                deleteStudent(index);
+            }
+        });
+
+        prevPageBtn.onclick = () => loadStudents(filterCourse.value, sortBy.value, --currentPage);
+        nextPageBtn.onclick = () => loadStudents(filterCourse.value, sortBy.value, ++currentPage);
+
+        filterCourse.addEventListener("change", () => loadStudents(filterCourse.value, sortBy.value, 1));
+        sortBy.addEventListener("change", () => loadStudents(filterCourse.value, sortBy.value, 1));
+
+        loadStudents();
+    });
+</script>
 
 </body>
 </html>

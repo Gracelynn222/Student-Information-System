@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-blue-100 flex justify-center items-center min-h-screen relative">
+  
+  <!-- Loading Screen -->
+  <div id="loading-screen" class="fixed inset-0 flex justify-center items-center bg-white z-50">
+      <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+  </div>
+
+  <!-- Back Button -->
+  <button onclick="history.back()" class="absolute top-4 left-4 text-gray-600 hover:text-blue-500">
+    &#8592; Back
+  </button>
+  
+  <!-- Main Content -->
+  <div id="content" class="bg-white w-full max-w-6xl rounded-lg shadow-lg p-12 relative hidden">
+      <!-- About Us Section -->
+      <div class="flex flex-col md:flex-row items-center">
+          <!-- Text Section -->
+          <div class="md:w-1/2 text-center md:text-left">
+              <h2 class="text-4xl font-bold text-gray-800 mb-6">ABOUT US</h2>
+              <hr class="border-gray-300 mb-4">
+              <p class="text-gray-600 leading-relaxed mb-6 text-justify text-lg">  
+                  The Student Information System (SIS) simplifies student record management by centralizing data like IDs, contact details, and course enrollments. It enhances efficiency, ensures accuracy, and streamlines academic processes for students, faculty, and administrators.
+              </p>
+          </div>
+
+          <!-- Image Section -->
+          <div class="md:w-1/2 flex justify-center mt-6 md:mt-0">
+              <img src="about us.png" alt="Team" class="w-96">
+          </div>
+      </div>
+  </div>
+
+  <script>
+      // Simulate loading effect
+      window.onload = function () {
+          setTimeout(() => {
+              document.getElementById("loading-screen").style.display = "none";
+              document.getElementById("content").classList.remove("hidden");
+          }, 1000); // Adjust delay as needed
+      };
+  </script>
+
+</body>
+</html>

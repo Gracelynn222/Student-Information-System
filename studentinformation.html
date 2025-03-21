@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Information System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -96,10 +97,26 @@
             background-color: #28a745;
             color: white;
             text-decoration: none;
+            position: relative;
         }
 
         .records-button:hover {
             background-color: #218838;
+        }
+
+        /* Notification Badge */
+        .notif-badge {
+            background: red;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 50%;
+            padding: 5px;
+            min-width: 20px;
+            display: none; /* Initially hidden */
+            position: absolute;
+            top: -5px;
+            right: -10px;
         }
 
         @media (max-width: 480px) {
@@ -113,7 +130,7 @@
             }
         }
 
-        h2 {
+        h1 {
             border: 1px solid blue;
             padding: 20px;
             width: 40%;
@@ -121,12 +138,9 @@
             margin: auto;
             margin-top: 50px;
         }
-        .cta-button:hover {
-            background-color: #0056b3;
-            color: white;
-        }
-         /* Back Button */
-         .back-btn {
+        
+        /* Back Button */
+        .back-btn {
             position: absolute;
             top: 15px;
             left: 15px;
@@ -148,12 +162,12 @@
     </style>
 </head>
 <body>
-      <!-- Back Button -->
-      <a href="index.html" class="back-btn">
+    <!-- Back Button -->
+    <a href="index.html" class="back-btn">
         <i>&#8592;</i> Back
     </a>
 
-    <h2><i class="fa-solid fa-school"></i> Student Information System</h2>
+    <h1><i class="fa-solid fa-school"></i> Student Information System</h1>
 
     <div class="container">
         <img src="sisi.png" alt="Classroom Image" class="student-image">
@@ -166,12 +180,12 @@
 
             <div class="input-container">
                 <i class="fa-solid fa-id-card"></i>
-                <input type="text" id="student-id" placeholder="Student ID" required>
+                <input type="number" id="student-id" placeholder="Student ID" required>
             </div>
 
             <div class="input-container">
                 <i class="fa-solid fa-phone"></i>
-                <input type="text" id="contact" placeholder="Contact Number" required>
+                <input type="tel" id="contact" placeholder="Contact Number" required pattern="[0-9]{10,}">
             </div>
 
             <div class="input-container">
@@ -187,14 +201,26 @@
 
             <div class="button-wrapper">
                 <button type="submit"><i class="fa-solid fa-user-plus"></i> Add Student</button>
-                <a href="table.html" class="records-button"><i class="fa-solid fa-list"></i> Set of Records</a>
+                
+                <a href="table.html" class="records-button">
+                    <i class="fa-solid fa-list"></i> Set of Records
+                    <span id="student-count" class="notif-badge">0</span>
+                </a>
             </div>
         </form>
     </div>
+    
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const studentForm = document.getElementById("student-form");
+            const studentCountBadge = document.getElementById("student-count");
+
+            function updateStudentCount() {
+                let students = JSON.parse(localStorage.getItem("students")) || [];
+                studentCountBadge.textContent = students.length;
+                studentCountBadge.style.display = students.length > 0 ? "inline-block" : "none";
+            }
 
             studentForm.addEventListener("submit", function (event) {
                 event.preventDefault();
@@ -207,7 +233,11 @@
                 };
 
                 if (!student.name || !student.id || !student.contact || !student.course) {
-                    alert("Please fill in all fields.");
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Please fill in all fields!",
+                    });
                     return;
                 }
 
@@ -215,11 +245,21 @@
                 students.push(student);
                 localStorage.setItem("students", JSON.stringify(students));
 
-                alert("Student successfully added!");
+                Swal.fire({
+                    icon: "success",
+                    title: "Success!",
+                    text: "Student successfully added!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
                 studentForm.reset();
+                updateStudentCount();
             });
+
+            // Load student count on page load
+            updateStudentCount();
         });
     </script>
-
 </body>
 </html>

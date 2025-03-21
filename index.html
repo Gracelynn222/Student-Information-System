@@ -31,12 +31,8 @@
         }
 
         @keyframes zoomEffect {
-            0% {
-                transform: scale(1);
-            }
-            100% {
-                transform: scale(1.1);
-            }
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
         }
 
         /* Dark Overlay for better contrast */
@@ -55,6 +51,13 @@
             text-align: center;
         }
 
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
         .cta-button {
             background-color: white;
             color: #007bff;
@@ -64,8 +67,9 @@
             font-weight: bold;
             border-radius: 5px;
             transition: 0.3s;
+            cursor: pointer;
+            border: none;
             display: inline-block;
-            margin-top: 20px;
         }
 
         /* Button Hover Effect */
@@ -74,6 +78,14 @@
             color: white;
             box-shadow: 0px 4px 10px rgba(0, 123, 255, 0.5);
             transform: scale(1.05);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            font-size: 16px;
+            color: white;
+            margin-top: 10px;
         }
 
         /* Footer Styles */
@@ -87,7 +99,6 @@
             width: 100%;
             font-size: 14px;
         }
-
     </style>
 </head>
 <body>
@@ -98,7 +109,11 @@
         <div class="landing-content">
             <h1>Welcome to the Student Information System</h1>
             <p>Manage student records with ease.</p>
-            <a href="studentinformation.html" class="cta-button" id="start-button">Get Started</a>
+            <div class="button-container">
+                <button class="cta-button" id="start-button">Get Started</button>
+                <a href="about.html" class="cta-button">About Us</a>
+            </div>
+            <p class="loading" id="loading-text">Loading<span id="dots"></span></p>
         </div>
     </header>
 
@@ -106,6 +121,32 @@
     <footer>
         &copy; 2025 Student Information System. All rights reserved.
     </footer>
+
+    <script>
+        document.getElementById("start-button").addEventListener("click", function(event) {
+            event.preventDefault();
+            let button = this;
+            let loadingText = document.getElementById("loading-text");
+            let dots = document.getElementById("dots");
+
+            // Disable button and show loading text
+            button.disabled = true;
+            button.style.opacity = "0.7";
+            loadingText.style.display = "block";
+
+            let dotCount = 0;
+            let dotInterval = setInterval(() => {
+                dotCount = (dotCount + 1) % 4;
+                dots.textContent = ".".repeat(dotCount);
+            }, 500); // Update every 500ms
+
+            // Simulate loading
+            setTimeout(() => {
+                clearInterval(dotInterval); // Stop dot animation
+                window.location.href = "studentinformation.html";
+            }, 2000); // 2 seconds delay before navigating
+        });
+    </script>
 
 </body>
 </html>
